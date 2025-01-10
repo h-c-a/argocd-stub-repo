@@ -1,0 +1,26 @@
+environment: production
+
+replicaCount: 3
+
+image:
+  tag: "production"
+  pullPolicy: Always
+
+ingress:
+  enabled: true
+  host: "hello-world.example.com"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6 

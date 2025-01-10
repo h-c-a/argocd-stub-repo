@@ -1,0 +1,25 @@
+environment: staging
+
+replicaCount: 2
+
+image:
+  tag: "staging"
+
+ingress:
+  enabled: true
+  host: "staging.hello-world.example.com"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4 

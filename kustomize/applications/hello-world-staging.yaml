@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello-world-staging
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    name: in-cluster
+    namespace: hello-world
+  source:
+    path: examples/kustomize/hello-world/overlay/staging
+    repoURL: 'file:///git/repos/your-local-repo'

@@ -1,0 +1,8 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your application has been deployed to the {{ .Values.environment }} environment with the following configuration:
+{{- if .Values.ingress.enabled }}
+You can access the application at: http://{{ .Values.ingress.host }}
+{{- else }}
+To access the application, you'll need to expose the service.
+{{- end }} 
