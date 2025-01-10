@@ -3,7 +3,7 @@ environment: production
 replicaCount: 3
 
 image:
-  tag: "production"
+  tag: "latest"
   pullPolicy: Always
 
 ingress:
