@@ -10,4 +10,4 @@ spec:
     namespace: hello-world
   source:
     path: examples/kustomize/hello-world/overlay/staging
-    repoURL: 'file:///git/repos/your-local-repo'
+    repoURL: 'https://github.com/h-c-a/argocd-stub-repo'
