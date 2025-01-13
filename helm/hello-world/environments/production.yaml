@@ -6,12 +6,6 @@ image:
   tag: "latest"
   pullPolicy: Always
 
-ingress:
-  enabled: true
-  host: "hello-world.example.com"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-
 resources:
   limits:
     cpu: 500m

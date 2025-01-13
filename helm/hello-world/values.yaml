@@ -24,11 +24,7 @@ service:
   port: 80
 
 ingress:
-  enabled: true
-  className: "nginx"
-  annotations: {}
-  path: "/"
-  pathType: Prefix
+  enabled: false
 
 resources:
   limits:
