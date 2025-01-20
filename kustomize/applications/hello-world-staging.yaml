@@ -9,5 +9,11 @@ spec:
     name: in-cluster
     namespace: hello-world
   source:
-    path: examples/kustomize/hello-world/overlay/staging
-    repoURL: 'file:///git/repos/your-local-repo'
+    path: kustomize/hello-world/overlay/staging
+    repoURL: https://github.com/h-c-a/argocd-stub-repo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

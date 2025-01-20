@@ -11,7 +11,6 @@ spec:
   source:
     path: kustomize/hello-world/overlay/production
     repoURL: 'https://github.com/h-c-a/argocd-stub-repo'
-    targetRevision: HEAD
   syncPolicy:
     automated:
       prune: true
