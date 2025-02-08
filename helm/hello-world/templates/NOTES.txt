@@ -1,8 +1,7 @@
-Thank you for installing {{ .Chart.Name }}.
+Stress-ng deployment {{ include "hello-world-chart.fullname" . }} is running in namespace {{ .Release.Namespace }}.
 
-Your application has been deployed to the {{ .Values.environment }} environment with the following configuration:
-{{- if .Values.ingress.enabled }}
-You can access the application at: http://{{ .Values.ingress.host }}
-{{- else }}
-To access the application, you'll need to expose the service.
-{{- end }} 
+To check the status of the pods:
+  kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "hello-world-chart.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"
+
+To check the logs:
+  kubectl logs --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "hello-world-chart.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" 
