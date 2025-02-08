@@ -44,18 +44,7 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-metrics:
-  enabled: true
-  port: 8080
-  
-env:
-  - name: CPU_LOAD
-    value: "random"
-  - name: MEMORY_LOAD
-    value: "random"
-  - name: INTERVAL
-    value: "30"
-
+# Stress-ng configuration
 command: ["/bin/stress-ng"]
 args:
   - "--cpu"
