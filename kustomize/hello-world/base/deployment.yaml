@@ -8,6 +8,23 @@ spec:
     spec:
       containers:
         - name: hello-world
-          image: nginx:latest
+          image: containerstack/cpustress:latest
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+              name: metrics
+          env:
+            - name: CPU_LOAD
+              value: "random"  # Generates random CPU load between 0-100%
+            - name: MEMORY_LOAD
+              value: "random"  # Generates random memory usage
+            - name: METRICS_PORT
+              value: "8080"
+            - name: INTERVAL
+              value: "30"      # Changes load every 30 seconds
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "128Mi"

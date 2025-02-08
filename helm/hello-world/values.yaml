@@ -4,7 +4,7 @@ environment: development
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: containerstack/cpustress
   pullPolicy: IfNotPresent
   tag: "latest"
 
@@ -21,7 +21,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
@@ -42,4 +42,16 @@ autoscaling:
 
 nodeSelector: {}
 tolerations: []
-affinity: {} 
+affinity: {}
+
+metrics:
+  enabled: true
+  port: 8080
+  
+env:
+  - name: CPU_LOAD
+    value: "random"
+  - name: MEMORY_LOAD
+    value: "random"
+  - name: INTERVAL
+    value: "30" 
