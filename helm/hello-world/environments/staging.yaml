@@ -3,6 +3,7 @@ environment: staging
 replicaCount: 2
 
 image:
+  repository: polinux/stress-ng
   tag: "latest"
   pullPolicy: Always
 
