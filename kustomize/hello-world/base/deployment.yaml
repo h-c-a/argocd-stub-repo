@@ -18,18 +18,19 @@ spec:
           command: ["/bin/stress-ng"]
           args: 
             - "--cpu"
-            - "1"
+            - "2"
+            - "--cpu-method"
+            - "random"
+            - "--cpu-load"
+            - "60"
             - "--vm"
-            - "1"
+            - "2"
             - "--vm-bytes"
             - "256M"
             - "--timeout"
             - "0"
             - "--metrics-brief"
-          resources:
-            limits:
-              cpu: "1"
-              memory: "512Mi"
-            requests:
-              cpu: "200m"
-              memory: "128Mi"
+            - "--cpu-load-slice"
+            - "25"
+            - "--cpu-method-switch"
+            - "60"

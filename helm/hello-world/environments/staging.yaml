@@ -7,25 +7,35 @@ image:
 
 resources:
   limits:
-    cpu: 200m
-    memory: 256Mi
+    cpu: 1000m    # 1 full CPU core
+    memory: 768Mi # 3x the VM stress amount for headroom
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 400m     # 40% of limit - allows for bursting
+    memory: 384Mi # 50% of limit - good starting point
 
 autoscaling:
   enabled: true
-  minReplicas: 2
+  minReplicas: 3
   maxReplicas: 4
 
-command: ["/bin/stress-ng"]
+command: 
+  - stress-ng
+
 args:
   - "--cpu"
-  - "1"
+  - "2"
+  - "--cpu-method"
+  - "random"
+  - "--cpu-load"
+  - "60"
   - "--vm"
-  - "1"
+  - "2"
   - "--vm-bytes"
   - "256M"
   - "--timeout"
   - "0"
-  - "--metrics-brief" 
+  - "--metrics-brief"
+  - "--cpu-load-slice"
+  - "25"
+  - "--cpu-method-switch"
+  - "60" 
