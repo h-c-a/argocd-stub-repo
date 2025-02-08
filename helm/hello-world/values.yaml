@@ -11,19 +11,22 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
-command:
-  - stress-ng
+command: ["/bin/stress-ng"]
 
 args:
   - "--cpu"
   - "1"
+  - "--cpu-method"
+  - "all"
+  - "--cpu-load"
+  - "60"
+  - "--timeout"
+  - "0"
+  - "--metrics-brief"
   - "--vm"
   - "1"
   - "--vm-bytes"
   - "256M"
-  - "--timeout"
-  - "0"
-  - "--metrics-brief"
 
 resources:
   limits:

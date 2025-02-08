@@ -4,38 +4,17 @@ replicaCount: 2
 
 image:
   tag: "latest"
+  pullPolicy: Always
 
 resources:
   limits:
-    cpu: 1000m    # 1 full CPU core
-    memory: 768Mi # 3x the VM stress amount for headroom
+    cpu: 750m
+    memory: 512Mi
   requests:
-    cpu: 400m     # 40% of limit - allows for bursting
-    memory: 384Mi # 50% of limit - good starting point
+    cpu: 300m
+    memory: 256Mi
 
 autoscaling:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 4
-
-command: 
-  - stress-ng
-
-args:
-  - "--cpu"
-  - "2"
-  - "--cpu-method"
-  - "random"
-  - "--cpu-load"
-  - "60"
-  - "--vm"
-  - "2"
-  - "--vm-bytes"
-  - "256M"
-  - "--timeout"
-  - "0"
-  - "--metrics-brief"
-  - "--cpu-load-slice"
-  - "25"
-  - "--cpu-method-switch"
-  - "60" 
+  minReplicas: 2
+  maxReplicas: 4 

@@ -18,25 +18,4 @@ resources:
 autoscaling:
   enabled: true
   minReplicas: 3
-  maxReplicas: 6
-
-command: ["/usr/bin/stress-ng"]
-
-args:
-  - "--cpu"
-  - "2"
-  - "--cpu-method"
-  - "matrixprod"
-  - "--cpu-load"
-  - "60"
-  - "--vm"
-  - "2"
-  - "--vm-bytes"
-  - "256M"
-  - "--timeout"
-  - "0"
-  - "--metrics-brief"
-  - "--cpu-load-slice"
-  - "25"
-  - "--cpu-method-switch"
-  - "60" 
+  maxReplicas: 6 
