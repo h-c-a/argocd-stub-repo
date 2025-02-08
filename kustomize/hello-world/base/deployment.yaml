@@ -20,7 +20,7 @@ spec:
             - "--cpu"
             - "2"
             - "--cpu-method"
-            - "random"
+            - "matrixprod"
             - "--cpu-load"
             - "60"
             - "--vm"

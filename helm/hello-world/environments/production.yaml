@@ -3,8 +3,9 @@ environment: production
 replicaCount: 3
 
 image:
-  tag: "latest"
-  pullPolicy: Always
+  repository: polinux/stress-ng
+  tag: "v0.15.10"
+  pullPolicy: IfNotPresent
 
 resources:
   limits:
@@ -19,14 +20,13 @@ autoscaling:
   minReplicas: 3
   maxReplicas: 6
 
-command: 
-  - stress-ng
+command: ["/usr/bin/stress-ng"]
 
 args:
   - "--cpu"
   - "2"
   - "--cpu-method"
-  - "random"
+  - "matrixprod"
   - "--cpu-load"
   - "60"
   - "--vm"
