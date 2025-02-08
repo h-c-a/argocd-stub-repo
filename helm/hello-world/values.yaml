@@ -45,7 +45,8 @@ tolerations: []
 affinity: {}
 
 # Stress-ng configuration
-command: ["/bin/stress-ng"]
+command:
+  - "/bin/stress-ng"
 args:
   - "--cpu"
   - "1"
