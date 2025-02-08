@@ -8,19 +8,20 @@ spec:
     spec:
       containers:
         - name: hello-world
-          image: containerstack/cpustress:latest
-          ports:
-            - containerPort: 8080
-              name: metrics
-          env:
-            - name: CPU_LOAD
-              value: "random"  # Generates random CPU load between 0-100%
-            - name: MEMORY_LOAD
-              value: "random"  # Generates random memory usage
-            - name: METRICS_PORT
-              value: "8080"
-            - name: INTERVAL
-              value: "30"      # Changes load every 30 seconds
+          image: polinux/stress-ng:latest
+          command: ["stress-ng"]
+          args: 
+            - "--cpu"
+            - "1"
+            - "--cpu-method"
+            - "all"
+            - "--vm"
+            - "1"
+            - "--vm-bytes"
+            - "256M"
+            - "--timeout"
+            - "0"
+            - "--metrics-brief"
           resources:
             limits:
               cpu: "1"
