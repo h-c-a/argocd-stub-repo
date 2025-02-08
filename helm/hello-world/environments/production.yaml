@@ -20,7 +20,8 @@ autoscaling:
   maxReplicas: 6
 
 command: 
-  - "/bin/stress-ng"
+  - stress-ng
+
 args:
   - "--cpu"
   - "1"

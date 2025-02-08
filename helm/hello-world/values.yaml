@@ -8,6 +8,7 @@ image:
   pullPolicy: IfNotPresent
   tag: "latest"
 
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -15,16 +16,19 @@ serviceAccount:
   create: true
   name: ""
 
-podAnnotations: {}
-podSecurityContext: {}
-securityContext: {}
+command:
+  - stress-ng
 
-service:
-  type: ClusterIP
-  port: 8080
-
-ingress:
-  enabled: false
+args:
+  - "--cpu"
+  - "1"
+  - "--vm"
+  - "1"
+  - "--vm-bytes"
+  - "256M"
+  - "--timeout"
+  - "0"
+  - "--metrics-brief"
 
 resources:
   limits:
@@ -42,18 +46,4 @@ autoscaling:
 
 nodeSelector: {}
 tolerations: []
-affinity: {}
-
-# Stress-ng configuration
-command:
-  - "/bin/stress-ng"
-args:
-  - "--cpu"
-  - "1"
-  - "--vm"
-  - "1"
-  - "--vm-bytes"
-  - "256M"
-  - "--timeout"
-  - "0"
-  - "--metrics-brief" 
+affinity: {} 

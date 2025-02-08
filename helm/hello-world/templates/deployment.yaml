@@ -1,37 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-deployment
+  name: {{ include "hello-world-chart.fullname" . }}
   labels:
-    app: hello-world
+    {{- include "hello-world-chart.labels" . | nindent 4 }}
     environment: {{ .Values.environment }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: hello-world
+      {{- include "hello-world-chart.selectorLabels" . | nindent 6 }}
       environment: {{ .Values.environment }}
   template:
     metadata:
       labels:
-        app: hello-world
+        {{- include "hello-world-chart.selectorLabels" . | nindent 8 }}
         environment: {{ .Values.environment }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hello-world-chart.serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: 
-            - stress-ng
+          {{- with .Values.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.args }}
           args:
-            - "--cpu"
-            - "1"
-            - "--vm"
-            - "1"
-            - "--vm-bytes"
-            - "256M"
-            - "--timeout"
-            - "0"
-            - "--metrics-brief"
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }} 
