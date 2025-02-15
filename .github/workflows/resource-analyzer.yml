@@ -83,7 +83,9 @@ jobs:
           TREND_THRESHOLD: ${{ github.event.inputs.trend_threshold || 0.1 }}
           HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
         run: |
-          sudo docker run --rm --privileged \
+          docker run --rm \
+            --network=host \
+            -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/app/manifests \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
