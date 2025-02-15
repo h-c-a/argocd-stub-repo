@@ -1,61 +1,61 @@
-name: k3d in Docker-in-Docker (DinD) Example
+name: k3d in DinD Example
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   k3d-dind:
     runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:19.03-dind
-        privileged: true
-        ports:
-          - 2375:2375
-        options: >-
-          --dns 8.8.8.8
-          --dns 8.8.4.4
-    
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Install Docker CLI
+      - name: Start Docker-in-Docker container
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
+          # Launch a docker:dind container in privileged mode
+          docker run --privileged --detach \
+            --name dind \
+            --publish 2375:2375 \
+            --env DOCKER_TLS_CERTDIR="" \
+            docker:dind \
+            dockerd -H 0.0.0.0:2375 --storage-driver=vfs
+          
+          # Wait a few seconds to ensure the daemon is fully up
+          sleep 5
+
+      - name: Test Docker
+        env:
+          DOCKER_HOST: tcp://localhost:2375
+        run: |
+          docker version
+          docker info
 
       - name: Install k3d
         run: |
-          # Install k3d (script from official repo)
           curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
-          # (Optional) verify installation
           k3d --version
+
+      - name: Create k3d cluster
+        env:
+          # Point Docker CLI and k3d at the DinD daemon
+          DOCKER_HOST: tcp://localhost:2375
+        run: |
+          k3d cluster create mycluster
+          echo "k3d cluster created!"
 
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+          sudo mv kubectl /usr/local/bin/kubectl
           kubectl version --client
 
-      - name: Create k3d cluster
-        env:
-          DOCKER_HOST: tcp://localhost:2375  # Point to the DinD service container
-        run: |
-          k3d cluster create mycluster
-          echo "k3d cluster created!"
-
       - name: Verify k3d cluster
-        # k3d writes its kubeconfig by default to ~/.k3d/kubeconfig-<clustername>.yaml.
-        # We'll set KUBECONFIG here so kubectl knows where to look.
         env:
+          # By default, k3d writes the kubeconfig to ~/.k3d/kubeconfig-<clusterName>.yaml
           KUBECONFIG: ~/.k3d/kubeconfig-mycluster.yaml
         run: |
-          echo "Listing k3d cluster nodes:"
           kubectl get nodes
+          kubectl get pods -A
 
       - name: Cleanup k3d cluster
         if: always()
