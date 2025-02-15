@@ -1,28 +1,66 @@
-name: DinD Test
+name: k3d in Docker-in-Docker (DinD) Example
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  test-k3d:
+  k3d-dind:
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:19.03-dind
+        privileged: true
+        ports:
+          - 2375:2375
+        options: >-
+          --dns 8.8.8.8
+          --dns 8.8.4.4
     
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-      - name: Build k3d image
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: k3d-runner
-          tags: latest
-          containerfiles: |
-            ./Dockerfile
+      - name: Install Docker CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
-      - name: Run k3d
-        uses: redhat-actions/podman-run@v1
-        with:
-          image: k3d-runner:latest
-          options: |
-            --privileged
-            -v /var/run/docker.sock:/var/run/docker.sock
+      - name: Install k3d
+        run: |
+          # Install k3d (script from official repo)
+          curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+          # (Optional) verify installation
+          k3d --version
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          kubectl version --client
+
+      - name: Create k3d cluster
+        env:
+          DOCKER_HOST: tcp://localhost:2375  # Point to the DinD service container
+        run: |
+          k3d cluster create mycluster
+          echo "k3d cluster created!"
+
+      - name: Verify k3d cluster
+        # k3d writes its kubeconfig by default to ~/.k3d/kubeconfig-<clustername>.yaml.
+        # We'll set KUBECONFIG here so kubectl knows where to look.
+        env:
+          KUBECONFIG: ~/.k3d/kubeconfig-mycluster.yaml
+        run: |
+          echo "Listing k3d cluster nodes:"
+          kubectl get nodes
+
+      - name: Cleanup k3d cluster
+        if: always()
+        env:
+          DOCKER_HOST: tcp://localhost:2375
+        run: |
+          k3d cluster delete mycluster
+          echo "k3d cluster deleted."
