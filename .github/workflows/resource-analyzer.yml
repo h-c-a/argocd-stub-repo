@@ -10,22 +10,23 @@ jobs:
         run: docker info
 
       - name: Run Docker outside of Docker
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AMP_WORKSPACE_ID: ${{ secrets.AMP_WORKSPACE_ID }}
+          CLUSTER_NAME: k3d-test
         run: |
           echo "Starting container..."
           docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            docker:latest \
-            sh -c "
-              # Verify Docker works inside container
-              docker version
-              
-              # Install k3d
-              apk add --no-cache curl
-              curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sh
-              
-              # Create k3d cluster
-              k3d cluster create test-cluster --wait
-              
-              # Show nodes
-              k3d node list
-            "
+            -p 8080:8080 \
+            -p 6550:6550 \
+            -v ${{ github.workspace }}:/app/manifests \
+            -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+            -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+            -e AWS_REGION=${AWS_REGION} \
+            -e AMP_WORKSPACE_ID=${AMP_WORKSPACE_ID} \
+            -e CLUSTER_NAME=${CLUSTER_NAME} \
+            public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
+            sh -c "/app/k8s-limits --directory /app/manifests --strategy prophet --history-window 10w --debug"
