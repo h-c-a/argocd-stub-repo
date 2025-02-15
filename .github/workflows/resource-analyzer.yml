@@ -12,7 +12,7 @@ jobs:
       - name: Run Docker outside of Docker
         run: |
           echo "Starting container..."
-          docker run -ti --rm \
+          docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             docker:latest \
             sh -c "
