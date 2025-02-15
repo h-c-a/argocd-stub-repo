@@ -15,11 +15,20 @@ jobs:
         run: |
           docker run --rm \
             --privileged \
-            --network=host \
-            -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/workspace \
-            public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
+            docker:dind \
             sh -c "
+              # Install required tools
+              apk add --no-cache curl
+              
+              # Install k3d
+              curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sh
+              
+              # Install kubectl
+              curl -LO https://dl.k8s.io/release/v1.29.2/bin/linux/amd64/kubectl
+              chmod +x kubectl
+              mv kubectl /usr/local/bin/
+              
               # Start Docker daemon
               dockerd &
               sleep 5
