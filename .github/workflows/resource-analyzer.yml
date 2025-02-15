@@ -64,11 +64,28 @@ jobs:
   analyze-resources:
     runs-on: ubuntu-latest
     
+    # Add container configuration with DinD service
+    container:
+      image: docker:latest
+      options: --privileged
+      
+    services:
+      dind:
+        image: docker:dind
+        options: >-
+          --privileged
+          --health-cmd "docker info"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       
       - name: Login to AWS ECR Public
+        env:
+          DOCKER_HOST: tcp://dind:2375
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -77,13 +94,14 @@ jobs:
       
       - name: Run resource analyzer
         env:
+          DOCKER_HOST: tcp://dind:2375
           BUSINESS_HOURS_START: ${{ github.event.inputs.business_hours_start || 9 }}
           BUSINESS_HOURS_END: ${{ github.event.inputs.business_hours_end || 17 }}
           BUSINESS_DAYS: ${{ github.event.inputs.business_days || '0,1,2,3,4' }}
           TREND_THRESHOLD: ${{ github.event.inputs.trend_threshold || 0.1 }}
           HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
         run: |
-          docker run --rm --privileged \
+          docker run --rm \
             -v ${{ github.workspace }}:/app/manifests \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
