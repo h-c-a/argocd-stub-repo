@@ -11,39 +11,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run k3d in Docker
+      - name: Test Docker
         run: |
-          docker run \
-            --rm \
-            --network=host \
-            --privileged \
+          docker version
+          docker info
+
+      - name: Test Docker Container
+        run: |
+          docker run --rm hello-world
+
+      - name: Test Docker Socket Mount
+        run: |
+          docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v ${{ github.workspace }}:/workspace \
             docker:dind \
-            sh -c "
-              # Install required tools
-              apk add --no-cache curl
-              
-              # Install k3d
-              curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sh
-              
-              # Install kubectl
-              curl -LO https://dl.k8s.io/release/v1.29.2/bin/linux/amd64/kubectl
-              chmod +x kubectl
-              mv kubectl /usr/local/bin/
-              
-              # Create k3d cluster
-              k3d cluster create test-cluster \
-                --wait \
-                --timeout 120s
-              
-              # Configure kubectl
-              mkdir -p /root/.kube
-              k3d kubeconfig get test-cluster > /root/.kube/config
-              
-              # Get nodes
-              kubectl get nodes
-              
-              # Clean up
-              k3d cluster delete test-cluster
-            "
+            docker version
