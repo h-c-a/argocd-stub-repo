@@ -1,4 +1,4 @@
-name: Example Docker Run with Host Network
+name: Docker outside of Docker Test
 
 on: [push]
 
@@ -9,11 +9,23 @@ jobs:
       - name: Print Docker info
         run: docker info
 
-      - name: Run a container with host network and Docker socket
+      - name: Run Docker outside of Docker
         run: |
           echo "Starting container..."
-          docker run \
-            --network=host \
+          docker run -ti --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            alpine:latest \
-            sh -c "echo 'Hello from inside the container!'"
+            docker:latest \
+            sh -c "
+              # Verify Docker works inside container
+              docker version
+              
+              # Install k3d
+              apk add --no-cache curl
+              curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | sh
+              
+              # Create k3d cluster
+              k3d cluster create test-cluster --wait
+              
+              # Show nodes
+              k3d node list
+            "
