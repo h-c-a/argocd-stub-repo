@@ -4,25 +4,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-dind:
+  test-k3d:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Test Docker
-        run: |
-          docker version
-          docker info
+      - name: Build k3d image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: k3d-runner
+          tags: latest
+          containerfiles: |
+            ./Dockerfile
 
-      - name: Test Docker Container
-        run: |
-          docker run --rm hello-world
-
-      - name: Test Docker Socket Mount
-        run: |
-          docker run --rm \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            docker:dind \
-            docker version
+      - name: Run k3d
+        uses: redhat-actions/podman-run@v1
+        with:
+          image: k3d-runner:latest
+          options: |
+            --privileged
+            -v /var/run/docker.sock:/var/run/docker.sock
