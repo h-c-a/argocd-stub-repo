@@ -13,8 +13,11 @@ jobs:
 
       - name: Run k3d in Docker
         run: |
-          docker run --rm \
+          docker run \
+            --rm \
+            --network=host \
             --privileged \
+            -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/workspace \
             docker:dind \
             sh -c "
@@ -29,14 +32,14 @@ jobs:
               chmod +x kubectl
               mv kubectl /usr/local/bin/
               
-              # Start Docker daemon
-              dockerd &
-              sleep 5
-              
               # Create k3d cluster
               k3d cluster create test-cluster \
                 --wait \
                 --timeout 120s
+              
+              # Configure kubectl
+              mkdir -p /root/.kube
+              k3d kubeconfig get test-cluster > /root/.kube/config
               
               # Get nodes
               kubectl get nodes
