@@ -71,6 +71,7 @@ jobs:
       - name: Wait for Docker
         run: |
           echo "⏳ Waiting for Docker daemon to start..."
+          echo "$(docker context ls --format json | jq -r 'select(.Current == true) | .DockerEndpoint' | sed 's!^unix://!!')"
           for i in {1..10}; do
             if docker info >/dev/null 2>&1; then
               echo "✅ Docker is ready!"
