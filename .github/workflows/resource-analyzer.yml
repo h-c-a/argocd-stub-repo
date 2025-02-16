@@ -93,23 +93,23 @@ jobs:
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
             debian:bookworm-slim \
-            sh -c '
-              echo "⏳ Waiting for Docker daemon to start..."
-              echo "$(docker info)"  
-              echo "$(docker context ls --format json | jq -r 'select(.Current == true) | .DockerEndpoint' | sed 's!^unix://!!')"
+            sh -c "
+              echo '⏳ Waiting for Docker daemon to start...'
+              docker info
+              docker context ls
               for i in {1..10}; do
                 if docker info >/dev/null 2>&1; then
-                  echo "✅ Docker is ready!"
+                  echo '✅ Docker is ready!'
                   break
                 fi
-                echo "🚧 Docker not ready yet, retrying... (Attempt $i/10)"
+                echo '🚧 Docker not ready yet, retrying... (Attempt $i/10)'
                 sleep 2
-                if [ "$i" -eq 10 ]; then
-                  echo "❌ Docker failed to start within the expected time."
+                if [ \$i -eq 10 ]; then
+                  echo '❌ Docker failed to start within the expected time.'
                   exit 1
                 fi
               done
-            '
+            "
 
       - name: Upload recommendations
         if: always()
