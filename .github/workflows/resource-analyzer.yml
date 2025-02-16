@@ -88,7 +88,8 @@ jobs:
       
       - name: Create Dockerfile
         run: |
-          echo "COPY --from=docker:dind /usr/local/bin/ /usr/local/bin/" > Dockerfile
+          echo "FROM ubuntu:24.04" > Dockerfile
+          echo "COPY --from=docker:dind /usr/local/bin/ /usr/local/bin/" >> Dockerfile
 
       - name: Build and run container
         run: |
