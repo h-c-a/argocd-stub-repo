@@ -83,10 +83,15 @@ jobs:
           TREND_THRESHOLD: ${{ github.event.inputs.trend_threshold || 0.1 }}
           HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
         run: |
+          # Create TEMP directory with proper permissions
+          mkdir -p TEMP
+          chmod 777 TEMP
+          
           docker run --rm \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/app/manifests \
+            -v ${{ github.workspace }}/TEMP:/app/TEMP \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -e AWS_REGION=${{ secrets.AWS_REGION }} \
