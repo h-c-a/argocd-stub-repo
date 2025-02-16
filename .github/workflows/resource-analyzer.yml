@@ -97,7 +97,6 @@ jobs:
             -e BUSINESS_DAYS=${BUSINESS_DAYS} \
             -e TREND_THRESHOLD=${TREND_THRESHOLD} \
             -e HIGH_VARIANCE_THRESHOLD=${HIGH_VARIANCE_THRESHOLD} \
-            --privileged \
             public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
             sh -c "/app/k8s-limits \
               --directory /app/manifests \
