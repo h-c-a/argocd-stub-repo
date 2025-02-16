@@ -84,44 +84,28 @@ jobs:
             fi
           done
       
-      - name: Login to AWS ECR Public
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      
       - name: Run resource analyzer
-        env:
-          BUSINESS_HOURS_START: ${{ github.event.inputs.business_hours_start || 9 }}
-          BUSINESS_HOURS_END: ${{ github.event.inputs.business_hours_end || 17 }}
-          BUSINESS_DAYS: ${{ github.event.inputs.business_days || '0,1,2,3,4' }}
-          TREND_THRESHOLD: ${{ github.event.inputs.trend_threshold || 0.1 }}
-          HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
         run: |
           echo "Starting container..."
           docker run \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -v ${{ github.workspace }}:/app/manifests \
-            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-            -e AWS_REGION=${{ secrets.AWS_REGION }} \
-            -e AMP_WORKSPACE_ID=${{ secrets.AMP_WORKSPACE_ID }} \
-            -e CLUSTER_NAME=${{ secrets.CLUSTER_NAME }} \
-            -e BUSINESS_HOURS_START=${BUSINESS_HOURS_START} \
-            -e BUSINESS_HOURS_END=${BUSINESS_HOURS_END} \
-            -e BUSINESS_DAYS=${BUSINESS_DAYS} \
-            -e TREND_THRESHOLD=${TREND_THRESHOLD} \
-            -e HIGH_VARIANCE_THRESHOLD=${HIGH_VARIANCE_THRESHOLD} \
-            public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
-            sh -c "/app/k8s-limits \
-              --directory /app/manifests \
-              --strategy ${{ github.event.inputs.strategy || 'ensemble' }} \
-              --history-window ${{ github.event.inputs.history_window || '24h' }} \
-              --cpu-percentile ${{ github.event.inputs.cpu_percentile || 95.0 }} \
-              --memory-buffer ${{ github.event.inputs.memory_buffer || 1.15 }} \
-              --debug"
+            ubuntu:24.04 \
+            sh -c '
+              echo "⏳ Waiting for Docker daemon to start..."
+              for i in {1..10}; do
+                if docker info >/dev/null 2>&1; then
+                  echo "✅ Docker is ready!"
+                  break
+                fi
+                echo "🚧 Docker not ready yet, retrying... (Attempt $i/10)"
+                sleep 2
+                if [ "$i" -eq 10 ]; then
+                  echo "❌ Docker failed to start within the expected time."
+                  exit 1
+                fi
+              done
+            '
 
       - name: Upload recommendations
         if: always()
