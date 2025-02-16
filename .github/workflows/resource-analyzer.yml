@@ -10,11 +10,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create Dockerfile
-        run: |
-          echo "FROM ubuntu:24.04" > Dockerfile
-          echo "COPY --from=docker:dind /usr/local/bin/ /usr/local/bin/" >> Dockerfile
-
       - name: Build and run container
         run: |
           docker build -t debian-with-docker --platform=linux/amd64 .
