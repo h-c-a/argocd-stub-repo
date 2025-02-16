@@ -68,6 +68,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Wait for Docker
+        run: |
+          echo "⏳ Waiting for Docker daemon to start..."
+          for i in {1..10}; do
+            if docker info >/dev/null 2>&1; then
+              echo "✅ Docker is ready!"
+              break
+            fi
+            echo "🚧 Docker not ready yet, retrying... (Attempt $i/10)"
+            sleep 2
+            if [ "$i" -eq 10 ]; then
+              echo "❌ Docker failed to start within the expected time."
+              exit 1
+            fi
+          done
+      
       - name: Login to AWS ECR Public
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -84,7 +100,8 @@ jobs:
           HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
         run: |
           echo "Starting container..."
-          docker run --rm \
+          docker run \
+            --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/app/manifests \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
