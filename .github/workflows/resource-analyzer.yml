@@ -88,13 +88,11 @@ jobs:
       
       - name: Create Dockerfile
         run: |
-          echo "FROM docker:dind as docker-cli" > Dockerfile
-          echo "FROM debian:bookworm-slim" >> Dockerfile
-          echo "COPY --from=docker-cli /usr/local/bin/ /usr/local/bin/" >> Dockerfile
+          echo "COPY --from=docker:dind /usr/local/bin/ /usr/local/bin/" > Dockerfile
 
       - name: Build and run container
         run: |
-          docker build -t debian-with-docker .
+          docker build -t debian-with-docker --platform=linux/amd64 .
           docker run \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
