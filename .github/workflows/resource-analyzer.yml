@@ -86,13 +86,19 @@ jobs:
             fi
           done
       
-      - name: Run resource analyzer
+      - name: Create Dockerfile
         run: |
-          echo "Starting container..."
+          echo "FROM docker:dind as docker-cli" > Dockerfile
+          echo "FROM debian:bookworm-slim" >> Dockerfile
+          echo "COPY --from=docker-cli /usr/local/bin/ /usr/local/bin/" >> Dockerfile
+
+      - name: Build and run container
+        run: |
+          docker build -t debian-with-docker .
           docker run \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            debian:bookworm-slim \
+            debian-with-docker \
             sh -c "
               echo '⏳ Waiting for Docker daemon to start...'
               docker info
@@ -102,7 +108,7 @@ jobs:
                   echo '✅ Docker is ready!'
                   break
                 fi
-                echo '🚧 Docker not ready yet, retrying... (Attempt $i/10)'
+                echo '🚧 Docker not ready yet, retrying... (Attempt \$i/10)'
                 sleep 2
                 if [ \$i -eq 10 ]; then
                   echo '❌ Docker failed to start within the expected time.'
