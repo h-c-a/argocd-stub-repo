@@ -127,7 +127,7 @@ jobs:
 
       - name: Upload recommendations
         if: always()
-        uses: actions/upload-artifactt@v4
+        uses: actions/upload-artifact@v4
         with:
           name: recommendations
           path: TEMP/recommendations.json 
