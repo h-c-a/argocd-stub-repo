@@ -84,21 +84,22 @@ jobs:
       
       - name: Run resource analyzer
         env:
+          TEMP_DIR: ${{ github.workspace }}/TEMP
           BUSINESS_HOURS_START: ${{ github.event.inputs.business_hours_start || 9 }}
           BUSINESS_HOURS_END: ${{ github.event.inputs.business_hours_end || 17 }}
           BUSINESS_DAYS: ${{ github.event.inputs.business_days || '0,1,2,3,4' }}
           TREND_THRESHOLD: ${{ github.event.inputs.trend_threshold || 0.1 }}
           HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
         run: |
-          # Create TEMP directory with proper permissions
-          mkdir -p TEMP
-          chmod 777 TEMP
+          mkdir -p ${{ github.workspace }}/TEMP
+          chmod 777 ${{ github.workspace }}/TEMP
           
           docker run --rm \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/app/manifests \
             -v ${{ github.workspace }}/TEMP:/app/TEMP \
+            -e TEMP_DIR=/app/TEMP \
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -e AWS_REGION=${{ secrets.AWS_REGION }} \
