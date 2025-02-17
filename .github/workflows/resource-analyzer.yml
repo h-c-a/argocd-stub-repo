@@ -74,6 +74,10 @@ jobs:
           role-to-assume:  arn:aws:iam::324037291530:role/GithubActionsToAWS
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
       
       - name: Run resource analyzer
         env:
