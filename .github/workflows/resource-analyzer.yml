@@ -71,8 +71,8 @@ jobs:
       - name: Login to AWS ECR Public
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume:  arn:aws:iam::324037291530:role/GithubActionsToAWS
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ secrets.AWS_REGION }}
       
       - name: Run resource analyzer
