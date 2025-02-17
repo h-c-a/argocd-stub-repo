@@ -63,6 +63,9 @@ on:
 jobs:
   analyze-resources:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     
     steps:
       - name: Checkout repository
@@ -71,7 +74,7 @@ jobs:
       - name: Login to AWS ECR Public
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume:  arn:aws:iam::324037291530:role/GithubActionsToAWS
+          role-to-assume: arn:aws:iam::324037291530:role/GithubActionsToAWS
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ secrets.AWS_REGION }}
 
