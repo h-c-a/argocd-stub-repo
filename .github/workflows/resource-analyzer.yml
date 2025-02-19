@@ -113,8 +113,6 @@ jobs:
             -e GITHUB_TOKEN=${GITHUB_TOKEN} \
             -e GITHUB_REPOSITORY_NAME=${GITHUB_REPOSITORY_NAME} \
             -e GITHUB_USERNAME=${GITHUB_USERNAME} \
-            -e AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/eks.amazonaws.com/serviceaccount/token \
-            -e AWS_ROLE_ARN=${{ secrets.AWS_IAM_ROLE }} \
             public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
             sh -c "/app/k8s-limits \
               --directory /app/manifests \
