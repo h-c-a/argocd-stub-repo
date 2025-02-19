@@ -89,6 +89,9 @@ jobs:
           BUSINESS_DAYS: ${{ github.event.inputs.business_days || '0,1,2,3,4' }}
           TREND_THRESHOLD: ${{ github.event.inputs.trend_threshold || 0.1 }}
           HIGH_VARIANCE_THRESHOLD: ${{ github.event.inputs.high_variance_threshold || 0.5 }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          GITHUB_USERNAME: ${{ github.repository_owner }}
         run: |
           mkdir -p /tmp/TEMP
           chmod 777 /tmp/TEMP
@@ -108,6 +111,9 @@ jobs:
             -e BUSINESS_DAYS=${BUSINESS_DAYS} \
             -e TREND_THRESHOLD=${TREND_THRESHOLD} \
             -e HIGH_VARIANCE_THRESHOLD=${HIGH_VARIANCE_THRESHOLD} \
+            -e GITHUB_TOKEN=${GITHUB_TOKEN} \
+            -e GITHUB_REPOSITORY_NAME=${GITHUB_REPOSITORY_NAME} \
+            -e GITHUB_USERNAME=${GITHUB_USERNAME} \
             public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
             sh -c "/app/k8s-limits \
               --directory /app/manifests \
