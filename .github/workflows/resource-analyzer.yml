@@ -102,7 +102,14 @@ jobs:
             -v ${{ github.workspace }}:/app/manifests \
             -v /tmp/TEMP:/tmp/TEMP \
             -v ~/.aws:/root/.aws \
-            -e AWS_REGION=${{ secrets.AWS_REGION }} \
+            -e AWS_REGION \
+            -e AWS_DEFAULT_REGION \
+            -e AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY \
+            -e AWS_SESSION_TOKEN \
+            -e AWS_SECURITY_TOKEN \
+            -e AWS_ROLE_ARN \
+            -e AWS_WEB_IDENTITY_TOKEN_FILE \
             -e AMP_WORKSPACE_ID=${{ secrets.AMP_WORKSPACE_ID }} \
             -e CLUSTER_NAME=${{ secrets.CLUSTER_NAME }} \
             -e BUSINESS_HOURS_START=${BUSINESS_HOURS_START} \
