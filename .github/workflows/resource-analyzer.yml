@@ -95,6 +95,7 @@ jobs:
         run: |
           # Create base temp directory
           TEMP_BASE=$(mktemp -d)
+          mkdir -p ${TEMP_BASE}/TEMP
           echo "TEMP_BASE=${TEMP_BASE}" >> $GITHUB_ENV
           
           docker run --rm \
@@ -121,9 +122,11 @@ jobs:
             -e GIT_TOKEN=${{ secrets.GIT_TOKEN }} \
             -e GITHUB_REPOSITORY_NAME=${GITHUB_REPOSITORY_NAME} \
             -e GITHUB_USERNAME=${GITHUB_USERNAME} \
+            -e TEMP_BASE=${TEMP_BASE} \
             public.ecr.aws/y3y8k7w5/k8sresourceautoresizer:latest \
             sh -c "/app/k8s-limits \
               --directory /app/manifests \
+              --output ${TEMP_BASE}/TEMP/output.yaml \
               --strategy ${{ github.event.inputs.strategy || 'ensemble' }} \
               --history-window ${{ github.event.inputs.history_window || '24h' }} \
               --cpu-percentile ${{ github.event.inputs.cpu_percentile || 95.0 }} \
