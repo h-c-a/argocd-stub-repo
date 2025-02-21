@@ -136,12 +136,28 @@ jobs:
       - name: Find recommendations file
         id: find-recommendations
         run: |
-          RECOMMENDATIONS_FILE=$(find ${TEMP_BASE} -name recommendations.json)
+          echo "Looking in ${TEMP_BASE} for recommendations.json"
+          ls -la ${TEMP_BASE}
+          ls -la ${TEMP_BASE}/TEMP
+          RECOMMENDATIONS_FILE="${TEMP_BASE}/TEMP/recommendations.json"
+          
+          if [ -f "${RECOMMENDATIONS_FILE}" ]; then
+            echo "✅ Found recommendations file at: ${RECOMMENDATIONS_FILE}"
+            echo "File contents:"
+            cat "${RECOMMENDATIONS_FILE}"
+          else
+            echo "❌ Recommendations file not found at: ${RECOMMENDATIONS_FILE}"
+            echo "Directory contents:"
+            find ${TEMP_BASE} -type f
+          fi
+          
           echo "RECOMMENDATIONS_FILE=${RECOMMENDATIONS_FILE}" >> $GITHUB_ENV
 
       - name: Upload recommendations
-        if: always()
+        if: always() && fileExists(env.RECOMMENDATIONS_FILE)
         uses: actions/upload-artifact@v4
         with:
           name: recommendations
-          path: ${{ env.RECOMMENDATIONS_FILE }}
+          path: |
+            ${{ env.RECOMMENDATIONS_FILE }}
+            ${{ env.TEMP_BASE }}/TEMP/output.yaml
