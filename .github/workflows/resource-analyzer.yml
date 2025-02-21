@@ -93,14 +93,15 @@ jobs:
           GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
         run: |
-          mkdir -p /tmp/TEMP
-          chmod 777 /tmp/TEMP
+          # Create base temp directory
+          TEMP_BASE=$(mktemp -d)
+          echo "TEMP_BASE=${TEMP_BASE}" >> $GITHUB_ENV
           
           docker run --rm \
             --network=host \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/app/manifests \
-            -v /tmp/TEMP:/tmp/TEMP \
+            -v ${TEMP_BASE}:${TEMP_BASE} \
             -v ~/.aws:/root/.aws \
             -e AWS_REGION \
             -e AWS_DEFAULT_REGION \
@@ -129,9 +130,15 @@ jobs:
               --memory-buffer ${{ github.event.inputs.memory_buffer || 1.15 }} \
               --debug"
 
+      - name: Find recommendations file
+        id: find-recommendations
+        run: |
+          RECOMMENDATIONS_FILE=$(find ${TEMP_BASE} -name recommendations.json)
+          echo "RECOMMENDATIONS_FILE=${RECOMMENDATIONS_FILE}" >> $GITHUB_ENV
+
       - name: Upload recommendations
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: recommendations
-          path: /tmp/TEMP/recommendations.json
+          path: ${{ env.RECOMMENDATIONS_FILE }}
