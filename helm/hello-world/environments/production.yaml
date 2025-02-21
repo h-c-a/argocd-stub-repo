@@ -1,21 +1,17 @@
-environment: production
-
-replicaCount: 3
-
-image:
-  repository: polinux/stress-ng
-  tag: "latest"
-  pullPolicy: IfNotPresent
-
-resources:
-  limits:
-    cpu: 1000m    # 1 full CPU core
-    memory: 768Mi # 3x the VM stress amount for headroom
-  requests:
-    cpu: 400m     # 40% of limit - allows for bursting
-    memory: 384Mi # 50% of limit - good starting point
-
 autoscaling:
   enabled: true
+  maxReplicas: 6
   minReplicas: 3
-  maxReplicas: 6 
+environment: production
+image:
+  pullPolicy: IfNotPresent
+  repository: polinux/stress-ng
+  tag: latest
+replicaCount: 3
+resources:
+  limits:
+    cpu: 5641m
+    memory: 2204Mi
+  requests:
+    cpu: 2820m
+    memory: 1695Mi
