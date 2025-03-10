@@ -103,8 +103,11 @@ jobs:
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v ${{ github.workspace }}:/app/manifests \
             -v ${TEMP_BASE}:${TEMP_BASE} \
+            -v ~/.aws:/root/.aws \
             -e AWS_REGION \
             -e AWS_DEFAULT_REGION \
+            -e AWS_ACCESS_KEY_ID \
+            -e AWS_SECRET_ACCESS_KEY \
             -e AWS_SESSION_TOKEN \
             -e AWS_SECURITY_TOKEN \
             -e AWS_ROLE_ARN \
