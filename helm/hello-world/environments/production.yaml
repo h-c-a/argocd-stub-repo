@@ -9,11 +9,11 @@ image:
 
 resources:
   limits:
-    cpu: 1000m    # 1 full CPU core
-    memory: 768Mi # 3x the VM stress amount for headroom
+    cpu: 5668m
+    memory: 2213Mi
   requests:
-    cpu: 400m     # 40% of limit - allows for bursting
-    memory: 384Mi # 50% of limit - good starting point
+    cpu: 2834m
+    memory: 1702Mi
 
 autoscaling:
   enabled: true
