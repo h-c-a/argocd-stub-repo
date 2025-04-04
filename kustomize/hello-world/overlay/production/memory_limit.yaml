@@ -9,9 +9,9 @@ spec:
         - name: hello-world
           resources:
             limits:
-              cpu: "1000m"
-              memory: "768Mi"
+              cpu: 3668m
+              memory: 2912Mi
             requests:
-              cpu: "400m"
-              memory: "384Mi"
+              cpu: 1834m
+              memory: 2240Mi
 
