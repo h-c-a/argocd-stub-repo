@@ -14,19 +14,22 @@ fullnameOverride: ""
 command: ["/bin/stress-ng"]
 
 args:
-  - "--cpu"
-  - "1"
-  - "--cpu-method"
-  - "all"
-  - "--cpu-load"
-  - "60"
-  - "--timeout"
-  - "0"
-  - "--metrics-brief"
-  - "--vm"
-  - "1"
-  - "--vm-bytes"
-  - "256M"
+  - '--cpu'
+  - '4'
+  - '--cpu-method'
+  - 'all'
+  - '--cpu-load'
+  - '80'
+  - '--timeout'
+  - '60s'
+  - '--metrics-brief'
+  - '--aggressive'
+  - '--vm'
+  - '1'  # Reduce the number of VM workers
+  - '--vm-bytes'
+  - '256M'  # Reduce memory per VM worker
+  - '--vm-method'
+  - 'all'
 
 resources:
   limits:
