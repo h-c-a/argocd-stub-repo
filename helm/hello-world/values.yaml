@@ -21,7 +21,7 @@ args:
   - '--cpu-load'
   - '80'
   - '--timeout'
-  - '10s'
+  - '0s'
   - '--metrics-brief'
   - '--aggressive'
   - '--vm'
