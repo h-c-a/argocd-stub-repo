@@ -7,7 +7,6 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
-t
 
 autoscaling:
   enabled: true
