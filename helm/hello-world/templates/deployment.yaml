@@ -33,11 +33,3 @@ spec:
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-            limits:
-              cpu: "1"
-              memory: "1Gi"
-            requests:
-              cpu: "500m"
-              memory: "512Mi" 
