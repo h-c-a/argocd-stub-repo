@@ -7,14 +7,6 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
-resources:
-  limits:
-    cpu: 9000m    # 1 full CPU core
-    memory: 6G # 3x the VM stress amount for headroom
-  requests:
-    cpu: 7000m     # 40% of limit - allows for bursting
-    memory: 2G # 50% of limit - good starting point
-
 autoscaling:
   enabled: true
   minReplicas: 3
